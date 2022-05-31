@@ -1,0 +1,18 @@
+{
+  "name": "GASAttendanceRecord",
+  "version": "0.0.1",
+  "description": "Record workspace members' attendance with Google Apps Script.",
+  "main": "index.js",
+  "repository": "git@github.com:Sy-Yamaguchi-cat/GASAttendanceRecord.git",
+  "author": "Sy-Yamaguchi-cat <sei.rm0307@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@google/clasp": "^2.4.1",
+    "@types/google-apps-script": "^1.0.47",
+    "reload": "^3.2.0",
+    "typescript": "^4.7.2"
+  },
+  "scripts": {
+    "view": "reload --browser --dir dist --port 8082"
+  }
+}
