@@ -2,13 +2,24 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_top">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
 
 <body>
-    <div id="root">
-        root
-    </div>
+    <div id="root"></div>
+    <noscript>
+        Javascript cannot be executed in this environment.
+    </noscript>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"
+        integrity="sha384-giNcJf3SG9+PJk7BY0ZOErCdUEVe5Cl6ZIAFtnCWxxDJUuZzgasqU0yHrXrLyTMo"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+        integrity="sha384-qNRyJf7QWit8TyNDvtY/lO+0pOqmeUFvckC6KQODyvq9KcrLpVC9OffNfXawgjHo"
+        crossorigin="anonymous"></script>
     <?!= origScript ?>
 </body>
 

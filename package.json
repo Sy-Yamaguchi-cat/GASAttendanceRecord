@@ -9,6 +9,8 @@
   "devDependencies": {
     "@google/clasp": "^2.4.1",
     "@types/google-apps-script": "^1.0.47",
+    "@types/react": "^18.0.10",
+    "@types/react-dom": "^18.0.5",
     "html-inline-script-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^5.5.0",
     "reload": "^3.2.0",

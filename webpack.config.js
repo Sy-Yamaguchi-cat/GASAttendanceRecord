@@ -4,7 +4,6 @@ const HtmlInlineScriptWebpackPlugin = require("html-inline-script-webpack-plugin
 
 const entry = {
     index: "./view/index.tsx",
-    test: "./view/aaaa.tsx"
 };
 
 module.exports = {
@@ -21,6 +20,11 @@ module.exports = {
             },
         ],
     },
+    externals: {
+        "react": "React",
+        "react-dom": "ReactDOM",
+        "preload": "GASPreload",
+    },
     resolve: {
         extensions: [
             ".tsx", ".ts", ".jsx", ".js",
@@ -29,14 +33,15 @@ module.exports = {
     plugins: [
         ...Object.entries(entry).map(([chunk, filename]) =>
             new HtmlWebpackPlugin({
-                filename: `${chunk}.html`,
+                filename: `${chunk}.template.html`,
                 template: path.join(__dirname, "template.html"),
                 chunks: [chunk],
-                minify: false,
+                inject: "body",
+                minify: true,
             })),
         ...Object.entries(entry).map(([chunk, filename]) =>
             new HtmlInlineScriptWebpackPlugin({
-                htmlMatchPattern: [`${chunk}.html`],
+                htmlMatchPattern: [`${chunk}.template.html`],
             })),
     ]
 }

@@ -3,3 +3,4 @@
 !src/**/*
 !LICENSE
 !README.md
+!dist/*.template.html
