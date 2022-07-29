@@ -15,30 +15,37 @@ export namespace database {
         return spreadsheet;
     }
 
-    export function getUserIndex(userKey: string): null | number {
+    function executeQuery(queryString: string, range: [number, number]) {
         const query = getSpreadsheet().getSheetByName("query");
-        query?.getRange(1, 1).setValue(`=MATCH("${userKey}",userInfo!A2:A,0)`);
-        const value = query?.getRange(1, 1, 1, 1).getValue();
-        if (value !== "#N/A") {
-            return parseInt(value);
+        const lock = LockService.getDocumentLock();
+        if (lock.tryLock(5000)) {
+            query?.getRange(1, 1).setValue(queryString);
+            const value = query?.getRange(1, 1, ...range).getValues();
+            lock.releaseLock();
+            return (value && value[0][0] !== "#N/A") ? value : null;
+        }
+        return null;
+    }
+
+    export function getUserIndex(userKey: string): null | number {
+        const value = executeQuery(`=MATCH("${userKey}",userInfo!A2:A,0)`, [1, 1]);
+        if (value) {
+            return parseInt(value[0][0]);
         }
         return null;
     }
 
     export function getUserInfo(userKey: string): { userKey: string, userEmail: string } | null {
-        const query = getSpreadsheet().getSheetByName("query");
-        query?.getRange(1, 1).setValue(`=QUERY(userInfo!A2:B,"WHERE A='${userKey}'")`);
-        const values = query?.getRange(1, 1, 1, 2).getValues()[0];
+        const values = executeQuery(`=QUERY(userInfo!A2:B,"WHERE A='${userKey}'")`, [1, 2]);
         if (!values) return null;
-        if (values[0] === "#N/A") return null;
-        return { userKey: values[0], userEmail: values[1] };
+        return { userKey: values[0][0], userEmail: values[0][1] };
 
     }
 
     export function addUser(userKey: string, userEmail: string) {
         const userInfo = getSpreadsheet().getSheetByName("userInfo");
         userInfo?.appendRow([userKey, userEmail]);
-        return getUserIndex(userKey);
+        return getUserInfo(userKey);
     }
 
     export function createSessionTable(sessionUUID: string, sessionName: string, startDate: Date): number | null {
@@ -63,12 +70,9 @@ export namespace database {
         attendance?.getRange(rowIndex, columnIndex)?.setValue(Utilities.formatDate(sessionEnd, "JST", "yyyy/MM/dd hh:mm"),)
     }
 
-    export type AttendanceState = "host" | "absent" | "noRecord";
 
-    export function setAttendanceState(sessionUUID: string, userKey: string, state: AttendanceState): boolean {
+    export function setAttendanceState(sessionInfo: session.SessionInfo, userKey: string, state: session.AttendanceState): boolean {
         const attendance = getSpreadsheet().getSheetByName("attendance");
-        const sessionInfo = session.getSession(sessionUUID);
-        if (!sessionInfo) return false;
         const userIndex = getUserIndex(userKey);
         if (!userIndex) return false;
         const rowIndex = baseSessionRawIndex + sessionInfo.sessionRowIndex;

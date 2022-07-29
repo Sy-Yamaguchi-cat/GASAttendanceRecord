@@ -3,7 +3,7 @@ import { database } from "./database";
 
 export namespace entries {
     const getEntries = ["index", "attend"] as const;
-    const postEntries = ["register"] as const;
+    const postEntries = ["createSession", "register"] as const;
     const entries = [...getEntries, ...postEntries];
     export type Entry = (typeof entries)[number];
 
@@ -18,13 +18,16 @@ export namespace entries {
             const templatePath = engine.getTemplateFilePath("index");
             const userKey = Session.getTemporaryActiveUserKey();
             const userEmail = Session.getActiveUser().getEmail();
-            const userInfo = database.getUserInfo(userKey);
-            if (!userInfo) database.addUser(userKey, userEmail);
+            const userInfo = database.getUserInfo(userKey) ?? database.addUser(userKey, userEmail);
             return engine.getHtmlFile(templatePath, {
                 userKey,
                 userEmail,
                 userInfo,
             });
+        },
+        createSession: (event) => {
+            const templatePath = engine.getTemplateFilePath("createSession");
+            return engine.getHtmlFile(templatePath, {});
         },
         attend: (event) => {
             const templatePath = engine.getTemplateFilePath("attend");

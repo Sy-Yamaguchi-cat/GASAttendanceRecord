@@ -30,11 +30,26 @@ export namespace session {
         return JSON.parse(activeSessionsProperty ?? "[]") as SessionInfo[];
     }
 
+    export type AttendanceState = "host" | "present" | "off" | "absent";
+
+    export function setSessionAattendance(userKey: string, sessionUUID: string, state: AttendanceState) {
+        const sessionInfo = getSession(sessionUUID);
+        if (!sessionInfo) return false;
+        if (state === "host" &&
+            sessionInfo.createdBy.userKey !== userKey) {
+            return false;
+        } else if (state === "present" &&
+            sessionInfo.sessionStart > new Date()) {
+            return false;
+        }
+        return database.setAttendanceState(sessionInfo, userKey, state);
+    }
+
     export function doneSession(userKey: string, sessionUUID: string) {
         const scriptProperties = getScriptProperties();
         const targetSession = getSession(sessionUUID);
         let activeSessions = getActiveSessins();
-        if (!targetSession) return activeSessions;
+        if (!targetSession || targetSession.createdBy.userKey !== userKey) return activeSessions;
         activeSessions = activeSessions.filter(
             (value) => value.sessionUUID !== sessionUUID || value.createdBy.userKey !== userKey
         );

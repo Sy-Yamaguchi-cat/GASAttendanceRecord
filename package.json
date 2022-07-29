@@ -20,6 +20,7 @@
     "webpack-cli": "^4.9.2"
   },
   "scripts": {
-    "view": "reload --browser --dir dist --port 8082"
+    "view:serve": "reload --browser --dir dist --port 8082",
+    "view:build": "webpack --config webpack.config.js"
   }
 }
