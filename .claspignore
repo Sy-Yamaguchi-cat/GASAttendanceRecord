@@ -1,0 +1,6 @@
+**/**
+!appsscript.json
+!src/**/*
+!LICENSE
+!README.md
+!dist/*.template.html
